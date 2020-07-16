@@ -1,0 +1,109 @@
+body {
+    margin: 0;
+    background-image: linear-gradient(90deg, rgb(250, 171, 171), rgb(154, 154, 250));
+    
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.calculator-frame {
+    width: 55vh;
+    height: 66vh;
+    border: 25px solid rgb(45, 45, 45);
+    border-radius: 20px;
+    display: grid;
+    grid-template-areas:
+        'screen screen screen screen screen'
+        'screen screen screen screen screen'
+        'button button button button button'
+        'button button button button button'
+        'button button button button button'
+        'button button button button button';
+    grid-gap: 15px;
+    grid-auto-rows: 1fr;
+    grid-auto-columns: 1fr;
+    align-content: center;
+    background-color: rgb(45, 45, 45);
+    font-family: Arial;
+    color: rgb(12, 12, 12);
+}
+
+.screen {
+    outline: 2px solid green;
+    grid-area: screen;
+    background-color: rgb(199, 208, 236);
+}
+
+.screen1 {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 40%;
+    font-size: 4vh;
+    text-align: right;
+    outline: 2px solid green;
+    background-color: rgb(199, 208, 236);
+    padding-right: 20px;
+}
+
+.screen2 {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 60%;
+    font-size: 7vh;
+    text-align: right;
+    outline: 2px solid rgb(249, 255, 249);
+    background-color: rgb(199, 208, 236);
+    padding-right: 20px;
+}
+
+.button {
+    outline: 1px solid black;
+    font-size: 30px;
+    border: none;
+    background-color: rgb(57, 92, 168);
+    border-radius: 6px;
+    color: white;
+    outline: none;
+}
+
+#equals {
+    background-color: rgb(94, 155, 53);
+}
+
+#divide, #ac, #del, #multiply, #subtract, #root, #add, #power {
+    background-color: rgb(189, 58, 58);
+}
+
+.button:hover {
+    animation: 0.1s buttonPress reverse;
+    /* box-shadow: 2px 2px 5px rgb(255, 255, 255),
+    -2px -2px 5px rgb(255, 255, 255),
+    2px -2px 5px rgb(255, 255, 255),
+    -2px 2px 5px rgb(255, 255, 255); */
+}
+
+@keyframes buttonPress {
+    0% {transform: scale(0.9);}
+    100% {transform: rotate(360deg);}
+}
+
+@media only screen and (max-width: 600px) {
+    .container {
+        width: 100vw;
+        align-items: flex-start;
+    }
+    .calculator-frame {
+        width: 100vw;
+        height: 120vw;
+        border-radius: 0px;
+    }
+}

@@ -36,7 +36,6 @@ body {
 }
 
 .screen {
-    outline: 2px solid green;
     grid-area: screen;
     background-color: rgb(199, 208, 236);
 }
@@ -48,9 +47,10 @@ body {
     height: 40%;
     font-size: 4vh;
     text-align: right;
-    outline: 2px solid green;
     background-color: rgb(199, 208, 236);
     padding-right: 20px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .screen2 {
@@ -58,11 +58,12 @@ body {
     justify-content: flex-end;
     align-items: center;
     height: 60%;
-    font-size: 7vh;
+    font-size: 6vh;
     text-align: right;
-    outline: 2px solid rgb(249, 255, 249);
     background-color: rgb(199, 208, 236);
     padding-right: 20px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .button {
@@ -75,25 +76,23 @@ body {
     outline: none;
 }
 
+.button-after {
+    /* transform: translateY(4px); */
+    animation: 0.1s buttonPress linear reverse;
+}
+
 #equals {
     background-color: rgb(94, 155, 53);
 }
 
-#divide, #ac, #del, #multiply, #subtract, #root, #add, #power {
+#divide, #ac, #del, #multiply, #subtract, #openingBracket, #add, #closingBracket {
     background-color: rgb(189, 58, 58);
 }
 
-.button:hover {
-    animation: 0.1s buttonPress reverse;
-    /* box-shadow: 2px 2px 5px rgb(255, 255, 255),
-    -2px -2px 5px rgb(255, 255, 255),
-    2px -2px 5px rgb(255, 255, 255),
-    -2px 2px 5px rgb(255, 255, 255); */
-}
 
 @keyframes buttonPress {
     0% {transform: scale(0.9);}
-    100% {transform: rotate(360deg);}
+    100% {transform: scale(1);}
 }
 
 @media only screen and (max-width: 600px) {
@@ -105,5 +104,16 @@ body {
         width: 100vw;
         height: 120vw;
         border-radius: 0px;
+        grid-gap: 10px;
     }
+
+    .screen1 {
+        font-size: 6vw;
+    }
+
+    .screen2 {
+        font-size: 8vw
+    }
+
+
 }

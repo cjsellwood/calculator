@@ -54,7 +54,7 @@ function updateScreen(text) {
         console.log(numbersOnly)
         
         // Clear any non numbers from end of numbers list previously entered
-        const unwanted = ["-", "+", "x", "÷", ""];
+        const unwanted = ["-", "+", "x", "÷", "", "="];
         for (let i = 0; i < unwanted.length; i ++) {
             for (let j = numbersOnly.length; j >= 0; j--) {
                 if (unwanted[i] === numbersOnly[j]) {

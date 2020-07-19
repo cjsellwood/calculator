@@ -27,13 +27,17 @@ function updateScreen(text) {
 
     //console.log("_" + screen1Text + "_")
     if (screen1Text[screen1Text.length - 2] === "=") {
-        console.log("____=____")
         if (text === " = ") {
             // Do nothing 
         
         // If button is other operator use previous answer as first number
         } else if (operators.indexOf(text) !== -1) {
             screen1Text = screen2Text + text;
+            screen2Text = ""
+        
+        // If using negative after answer
+        } else if (text === " - " && screen2Text !== "") {
+            screen1Text = screen2Text;
             screen2Text = ""
         
         // If clear entry pressed after equals clear answer and remove equals
@@ -143,7 +147,7 @@ function updateScreen(text) {
         } else if (screen1Text[screen1Text.length - 1] === "-") {
             // Do nothing
 
-        // If last 
+        
 
         } else {
             screen1Text += text;
@@ -170,8 +174,12 @@ function updateScreen(text) {
         } else {
             screen1Text += text;
 
+            // Check for brackets and perform operations inside each bracket
+            let calculationText = checkBrackets(screen1Text);
+
             // Perform calculation on screen1Text
-            screen2Text = 123456789;
+            //console.log(screen1Text);
+            screen2Text = calculateResult(calculationText)
         }
     
     } else if (text === "(") {
@@ -209,6 +217,118 @@ function updateScreen(text) {
     screen2.textContent = screen2Text;
 }
 
+// Function to check if brackets input, then calculate inside them
+function checkBrackets(text) {
+    // console.log("brackets")
+    // console.log(text)
+
+    let lastOpening = -1;
+
+    // Get location of last opening bracket
+    for (let j = 0; j < text.length; j++) {
+        if (text[j] === "(") {
+            lastOpening = j;
+        }
+    }
+
+    let lastClosing = -1;
+    // Get location of closing bracket following opening
+    for (let j = lastOpening; j < text.length; j++) {
+        if (text[j] === ")") {
+            lastClosing = j;
+        }
+    }
+    // If both brackets found, replace with calculated results
+    if (lastOpening !== -1 && lastClosing !== -1) {
+        let insideBracket = text.slice(lastOpening + 1, lastClosing)
+        console.log(insideBracket)
+
+        const result = calculateResult(insideBracket);
+        text = text.slice(0, lastOpening) + result + text.slice(lastClosing + 1, text.length);
+        console.log("bracket return")
+        console.log(text)
+        return text;
+    } else {
+        console.log("normal return")
+        console.log(text)
+        return text;
+    }
+    
+}
+
+function add(a, b) {
+    console.log("add");
+    //console.log(a)
+    //console.log(b)
+    return Number(a) + Number(b);
+}
+
+function subtract(a, b) {
+    return Number(a) - Number(b);
+}
+
+function multiply(a, b) {
+    console.log("multiply")
+    return Number(a) * Number(b);
+}
+
+function divide(a, b) {
+    return Number(a) / Number(b);
+}
+
+function calculateResult(text) {
+    //console.log("_" + text +"_");
+    let textArray = text.split(' ');
+    //console.log(textArray);
+
+    let i = 0;
+    // Multiplication and division first
+    while (i < textArray.length) {
+        //console.log(i);
+        if (textArray[i] === "x") {
+            const product = multiply(textArray[i - 1], textArray[i + 1])
+            //console.log(product);
+            //console.log(textArray)
+            textArray.splice(i - 1, 3, product)
+            //console.log(textArray)
+            i -= 1;
+        } else if (textArray[i] === "÷") {
+            const quotient = divide(textArray[i - 1], textArray[i + 1])
+            //console.log(textArray)
+            textArray.splice(i - 1, 3, quotient)
+            //console.log(textArray)
+            i -= 1;
+        }
+        i++;
+    }
+
+    i = 0;
+    // Addition and subtraction after
+    while (i < textArray.length) {
+        //console.log(i);
+        if (textArray[i] === "+") {
+            const sum = add(textArray[i - 1], textArray[i + 1])
+            //console.log(textArray)
+            textArray.splice(i - 1, 3, sum)
+            //console.log(textArray)
+            i -= 1;
+        } else if (textArray[i] === "-") {
+            const difference = subtract(textArray[i - 1], textArray[i + 1])
+            //console.log(textArray)
+            textArray.splice(i - 1, 3, difference)
+            //console.log(textArray)
+            i -= 1;
+        }
+
+        i++;
+    }
+    // Convert to exponential form if too large to display
+    if (textArray[0] > 10 ** 13) {
+        return (1 * textArray[0]).toPrecision(4);
+    }
+
+    return Math.round((Number(textArray[0]) + 0.00001) * 1000) / 1000;
+}
 
 // Add listener to do the following when a button is pressed
 const buttons = document.querySelectorAll('button');

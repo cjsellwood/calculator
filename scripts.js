@@ -1,11 +1,3 @@
-// notes
-// Clicking equals while the last press was operator should do nothing/ alert user somehow
-// Round decimals with long answers
-// Display error if divided by 0
-// After equals pressed, display input on top line, and answer on bottom,
-//      then allow another operator to be used following answer, or cleared if number pressed
-
-
 // Starting screen 1 and 2 text can be manipulated anywhere
 let screen1Text = "";
 
@@ -179,7 +171,12 @@ function updateScreen(text) {
 
             // Perform calculation on screen1Text
             //console.log(screen1Text);
-            screen2Text = calculateResult(calculationText)
+            if (calculationText === "Bracket Error") {
+                screen2Text = "Bracket Error";
+            } else {
+                screen2Text = calculateResult(calculationText);
+            }
+            
         }
     
     } else if (text === "(") {
@@ -201,10 +198,7 @@ function updateScreen(text) {
         if (openCount > closedCount) {
             screen1Text += text;
             screen2Text += text;
-        }
-
-        // Don't allow if no opening bracket
-    
+        } 
         
     // Handles all other keys, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
     } else {
@@ -219,40 +213,73 @@ function updateScreen(text) {
 
 // Function to check if brackets input, then calculate inside them
 function checkBrackets(text) {
-    // console.log("brackets")
-    // console.log(text)
+    console.log("brackets")
+    console.log(text)
 
+    let i = 0;
     let lastOpening = -1;
+    let nextClosing = -1;
 
-    // Get location of last opening bracket
-    for (let j = 0; j < text.length; j++) {
-        if (text[j] === "(") {
-            lastOpening = j;
+    // Error if brackets back to back anywhere
+    for (let k = 0; k < text.length; k++) {
+        if (text.slice(k, k + 2) === ")(") {
+            text = "Bracket Error";
+            i = 1;
         }
     }
 
-    let lastClosing = -1;
-    // Get location of closing bracket following opening
-    for (let j = lastOpening; j < text.length; j++) {
-        if (text[j] === ")") {
-            lastClosing = j;
+    while (i === 0) {
+        i = 1;
+        // Get location of last opening bracket
+        for (let j = 0; j < text.length; j++) {
+            if (text[j] === "(") {
+                lastOpening = j;
+                i = 0;
+            }
         }
-    }
-    // If both brackets found, replace with calculated results
-    if (lastOpening !== -1 && lastClosing !== -1) {
-        let insideBracket = text.slice(lastOpening + 1, lastClosing)
-        console.log(insideBracket)
+    
+        
+        // Get location of closing bracket following opening
+        for (let j = lastOpening; j < text.length; j++) {
+            if (text[j] === ")") {
+                nextClosing = j;
+                break;
+            }
+        }
 
-        const result = calculateResult(insideBracket);
-        text = text.slice(0, lastOpening) + result + text.slice(lastClosing + 1, text.length);
-        console.log("bracket return")
-        console.log(text)
-        return text;
-    } else {
-        console.log("normal return")
-        console.log(text)
-        return text;
+        
+
+        // If both brackets found, replace with calculated results
+        if (lastOpening !== -1 && nextClosing !== -1) {
+            let insideBracket = text.slice(lastOpening + 1, nextClosing)
+            console.log(insideBracket)
+    
+            const result = calculateResult(insideBracket);
+            text = text.slice(0, lastOpening) + result + text.slice(nextClosing + 1, text.length);
+            
+            // If brackets have nothing between them
+            if (nextClosing - 1 === lastOpening) {
+                console.log("blank brackets")
+                text = "Bracket Error";
+            } 
+            console.log("calc return")
+            console.log(text)
+
+
+
+            // Reset bracket locations
+            lastOpening = -1;
+            nextClosing = -1;
+
+        } else if (lastOpening !== -1) {
+            text = "Bracket Error";
+        }
+        console.log("to infinity")
     }
+
+    console.log("bracket return")
+    console.log(text)
+    return text;
     
 }
 
@@ -282,21 +309,15 @@ function calculateResult(text) {
     //console.log(textArray);
 
     let i = 0;
-    // Multiplication and division first
+    // Multiplication and division first, start over when calculated
     while (i < textArray.length) {
-        //console.log(i);
         if (textArray[i] === "x") {
             const product = multiply(textArray[i - 1], textArray[i + 1])
-            //console.log(product);
-            //console.log(textArray)
             textArray.splice(i - 1, 3, product)
-            //console.log(textArray)
             i -= 1;
         } else if (textArray[i] === "÷") {
             const quotient = divide(textArray[i - 1], textArray[i + 1])
-            //console.log(textArray)
             textArray.splice(i - 1, 3, quotient)
-            //console.log(textArray)
             i -= 1;
         }
         i++;
@@ -305,28 +326,24 @@ function calculateResult(text) {
     i = 0;
     // Addition and subtraction after
     while (i < textArray.length) {
-        //console.log(i);
         if (textArray[i] === "+") {
             const sum = add(textArray[i - 1], textArray[i + 1])
-            //console.log(textArray)
             textArray.splice(i - 1, 3, sum)
-            //console.log(textArray)
             i -= 1;
         } else if (textArray[i] === "-") {
             const difference = subtract(textArray[i - 1], textArray[i + 1])
-            //console.log(textArray)
             textArray.splice(i - 1, 3, difference)
-            //console.log(textArray)
             i -= 1;
         }
 
         i++;
     }
-    // Convert to exponential form if too large to display
-    if (textArray[0] > 10 ** 13) {
+    // Convert to exponential form if too large to display or too small
+    if (textArray[0] > 10 ** 12 || textArray[0] < -(10 ** 12)) {
         return (1 * textArray[0]).toPrecision(4);
+    } else if (textArray[0] < 10 ** -12 && textArray[0] > -(10 ** -12)) {
+        return (1 * textArray[0]).toPrecision(3);
     }
-
     return Math.round((Number(textArray[0]) + 0.00001) * 1000) / 1000;
 }
 
@@ -342,7 +359,7 @@ buttons.forEach((button) => {
         button.classList.add("button-after");
     })
 
-
+    
     button.addEventListener('mousedown', () => {
         button.classList.toggle("button-after")
     })
@@ -379,7 +396,8 @@ window.addEventListener('keydown', function(e) {
         const buttons = document.querySelectorAll('button');
         buttons.forEach((button) => {
             if (button.textContent === keyText) {
-                button.classList.add("button-after")
+                // Keeps button held down if key held
+                button.classList.add("button-after-keyboard")
             } 
                 
         });
@@ -398,7 +416,7 @@ window.addEventListener('keyup', function(e) {
         const buttons = document.querySelectorAll('button');
         buttons.forEach((button) => {
             if (button.textContent === keyText) {
-                button.classList.remove("button-after")
+                button.classList.remove("button-after-keyboard")
             } 
         });
     }

@@ -81,6 +81,11 @@ body {
     animation: 0.1s buttonPress linear reverse;
 }
 
+.button-after-keyboard {
+    animation: 0.1s buttonPress linear reverse;
+    transform: scale(0.9);
+}
+
 #equals {
     background-color: rgb(94, 155, 53);
 }
@@ -98,12 +103,11 @@ body {
 @media only screen and (max-width: 600px) {
     .container {
         width: 100vw;
-        align-items: flex-start;
+        /* align-items: flex-start; */
     }
     .calculator-frame {
         width: 100vw;
         height: 120vw;
-        border-radius: 0px;
         grid-gap: 10px;
     }
 
